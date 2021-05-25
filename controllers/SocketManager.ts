@@ -8,6 +8,11 @@ type Events = {
   close: [WebSocket];
 };
 
+interface WebSocketPackage<T> {
+  data: T,
+  time: Date
+}
+
 class SocketEvents extends EventEmitter<Events> {}
 
 const socketEvents = new SocketEvents();
@@ -28,7 +33,7 @@ export class SocketManager {
     }
   }
 
-  public static send(payload: unknown) {
+  public static send<T>(payload: WebSocketPackage<T>) {
     for (const socket of activeSockets) {
       socket.send(JSON.stringify(payload));
     }
