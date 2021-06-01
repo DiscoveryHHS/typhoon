@@ -24,12 +24,17 @@ SocketManager.events.on("message", async (json) => {
   try {
     const object = JSON.parse(json);
     console.log("Incomming Socket command: ", object);
-  
+
     if (object.command) {
       await SerialInterface.send(CommandType.OPERATION, object.command);
     }
   } catch (err) {
-      console.error(err);
+    console.error(err);
   }
-
 });
+
+
+// Encoder get interval
+setInterval(() => {
+  SerialInterface.send(CommandType.GET_ENCODERS, "0");
+}, 2000);

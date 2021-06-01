@@ -9,8 +9,14 @@ type Events = {
 };
 
 interface WebSocketPackage<T> {
-  data: T,
-  time: Date
+  data: T;
+  time: Date;
+  identifier: Identifiers;
+}
+
+export enum Identifiers {
+  PROXIMITY = "PROXIMITY",
+  ENCODER = "ENCODER",
 }
 
 class SocketEvents extends EventEmitter<Events> {}

@@ -1,5 +1,5 @@
 import { EventEmitter } from "https://deno.land/x/event@1.0.0/mod.ts";
-import { encoderHandler } from "./CommandHandler.ts";
+import { encoderHandler, proximityHandler } from "./CommandHandler.ts";
 
 const linuxSend = async (serialPort: string, payload: string) => {
   await Deno.writeTextFile(serialPort, payload);
@@ -29,8 +29,9 @@ type Events = {
 };
 
 export enum CommandType {
-  OPERATION = "OP:",
-  QUERY = "QR:",
+  SETMOTORS = "SM",
+  GET_ENCODERS = "GE",
+  OPERATION = "",
 }
 
 class SerialEvents extends EventEmitter<Events> {}
@@ -39,8 +40,12 @@ const serialEvents = new SerialEvents();
 export class SerialInterface {
   public static readonly events = serialEvents;
 
-  public static async send(_type: CommandType, message: string) {
-    if (platform === "linux") await linuxSend("/dev/ttyUSB0", `${message}\n`);
+  public static async send(type: CommandType, message: string) {
+    if (platform === "linux") {
+      await linuxSend("/dev/ttyUSB0", `${type}:${message}\n`);
+    }
+
+    console.log("Sending serial: ", { type, message });
   }
 }
 
@@ -56,6 +61,9 @@ setInterval(async () => {
         switch (commandType) {
           case "EC":
             encoderHandler(value);
+            break;
+          case "PR":
+            proximityHandler(value);
             break;
         }
       }
