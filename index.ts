@@ -18,8 +18,10 @@ app.addEventListener("error", (error) => {
 app.use(controlRouter.routes());
 app.use(controlRouter.allowedMethods());
 
+// start server
 app.listen({ port: 5000 });
 
+// On incomming websocket commands
 SocketManager.events.on("message", async (json) => {
   try {
     const object = JSON.parse(json);
@@ -33,8 +35,7 @@ SocketManager.events.on("message", async (json) => {
   }
 });
 
-
-// Encoder get interval
+// Encoder query interval
 setInterval(() => {
-  SerialInterface.send(CommandType.GET_ENCODERS, "0");
+  SerialInterface.send(CommandType.GET_ENCODERS, ";");
 }, 2000);
